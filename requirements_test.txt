@@ -1,5 +1,5 @@
 pytest
 cffi
-numpy
+numpy==1.17.3
 scipy
 pandas

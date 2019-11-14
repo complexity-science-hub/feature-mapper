@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mstrauss/feature-mapper.svg)](https://travis-ci.org/mstrauss/feature-mapper)
+
 # Synopsis
 
 Python module (using Rust) to transform a binary observation-feature1

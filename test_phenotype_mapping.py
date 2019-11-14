@@ -1,10 +1,12 @@
+import os
+
 import numpy as np
 import pandas as pd
 import pytest
 from scipy import sparse
 
 from feature_mapper import map_feature, map_feature_smin
-from feature_mapper.pure import PureMapper, make_valid_indicator_matrix
+from feature_mapper.pure import make_valid_indicator_matrix
 
 
 def eq_spm(spm1, spm2):
@@ -52,13 +54,6 @@ def indicator_matrix():
                      [0, 0, 0, 0, 1]])
 
 
-@pytest.fixture(scope='session')
-def example1():
-    return \
-        pd.read_csv('examples/infeatures.csv', header=None).values,\
-        make_valid_indicator_matrix(pd.read_csv('examples/mapping_matrix.csv', header=None).values)
-
-
 def test_map_feature(rand_spm, indicator_matrix):
     mf0 = map_feature_smin(rand_spm, indicator_matrix, 0)
     mf = map_feature(rand_spm, indicator_matrix)
@@ -83,12 +78,30 @@ def test_map_feature_smin(rand_spm):
             mf_rust.sum(axis=0))).all()
 
 
-def test_map_feature_example1(example1):
-    obs, mm = example1
-    mf00 = map_feature(obs, mm)
-    mf0 = map_feature_smin(obs, mm, 0)
-    mf30 = map_feature_smin(obs, mm, 10)
-    assert_eq_spm(mf00, mf0)
+def test_remapping_0(indicator_matrix):
+    """
+    test the remapping function of map_feature with deterministic inputs
+    """
+    obs = np.array([[1, 1, 1, 1, 1], \
+                    [1, 1, 1, 1, 0], \
+                    [1, 1, 0, 1, 0], \
+                    [1, 0, 0, 1, 0], \
+                    [0, 0, 0, 0, 1]], dtype=np.int8)
+    mf = map_feature(obs, indicator_matrix)
+    mf0 = map_feature_smin(obs, indicator_matrix, 0)
+    assert_eq_spm(mf, mf0)
+    # the first observation shall now have the last output-feature
+    # assigned instead of the first one
+    assert mf.toarray().tolist() == [[True, False, True, False], \
+                                     [False, True, True, False], \
+                                     [False, True, False, False], \
+                                     [False, False, False, False], \
+                                     [False, False, False, True]]
+
+    # # also compare with pure python output; FAILS: this is currently
+    # # failing because of a bug in the pure Python mapper
+    # mf2_py = PureMapper(indicator_matrix).map_feature_smin(obs, 2).tocsr()
+    # assert_eq_spm(mf2, mf2_py)
 
 
 def test_remapping_1(indicator_matrix):
@@ -122,7 +135,6 @@ def test_remapping_2():
     # obs., so it must get out-(1,3) instead.
     obs = np.array([[1, 1, 1, 1, 1],\
                     [1, 1, 1, 0, 1],\
-                    #[1, 1, 1, 0, 1],\
                     [1, 1, 0, 1, 0],\
                     [1, 0, 0, 1, 0],\
                     [0, 0, 0, 0, 1],\
@@ -134,7 +146,6 @@ def test_remapping_2():
                    [0, 0, 0, 0, 1]])
     res1 = [[1, 0, 1, 0, 0],\
             [0, 1, 0, 1, 0],\
-            #[0, 1, 0, 1, 0],\
             [0, 0, 0, 0, 0],\
             [0, 0, 0, 0, 0],\
             [0, 0, 0, 0, 1],\
@@ -146,7 +157,6 @@ def test_remapping_2():
     # already:
     res2 = [[0, 1, 0, 1, 0],
             [0, 1, 0, 1, 0],\
-            #[0, 1, 0, 1, 0],\
             [0, 0, 0, 0, 0],\
             [0, 0, 0, 0, 0],\
             [0, 0, 0, 0, 0],\
@@ -174,3 +184,20 @@ def test_mapping_priorities(indicator_matrix):
     # # compare with pure python
     # mf_py = PureMapper(indicator_matrix).map_feature(obs).tocsr()
     # assert_eq_spm(mf, mf_py)
+
+
+if os.path.isfile('examples/infeatures.csv'):
+
+    @pytest.fixture(scope='session')
+    def example1():
+        return \
+            pd.read_csv('examples/infeatures.csv', header=None).values,\
+            make_valid_indicator_matrix(
+                pd.read_csv('examples/mapping_matrix.csv', header=None).values)
+
+    def test_map_feature_example1(example1):
+        obs, mm = example1
+        mf00 = map_feature(obs, mm)
+        mf0 = map_feature_smin(obs, mm, 0)
+        assert_eq_spm(mf00, mf0)
+        map_feature_smin(obs, mm, 10)

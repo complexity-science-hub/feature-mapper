@@ -34,10 +34,14 @@ def sparsify(mat):
 def map_feature(spm, im):
     spm = C(sparsify(spm))
     im = C(sparsify(im))
+    assert spm['shape'][1] == im['shape'][1],\
+        "Number of columns of in-feature and mapping matrices must match."
     return Py(lib.remap_rows(spm, im))
 
 
 def map_feature_smin(spm, im, smin):
     spm = C(sparsify(spm))
     im = C(sparsify(im))
+    assert spm['shape'][1] == im['shape'][1],\
+        "Number of columns of in-feature and mapping matrices must match."
     return Py(lib.remap_rows_smin(spm, im, smin))
