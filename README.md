@@ -50,13 +50,12 @@ or see https://rustup.rs/
 
 ## via pip
 
-    pip install git+https://github.com/complexity-science-hub/feature-mapper.git
+    pip install feature-mapper
 
 
-## via pipenv
+## via poetry
 
-    pipenv install cffi
-    pipenv install git+ssh://git@gitlab.csh.ac.at/med/phenotype-mapping.git#egg=feature-mapper
+    poetry add feature-mapper
 
 
 ## via repo-clone (using pyenv)
