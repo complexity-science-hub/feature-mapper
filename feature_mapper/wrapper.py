@@ -31,7 +31,7 @@ def sparsify(mat):
         return sparse.csr_matrix(np.array(mat, dtype=np.int8))
 
 
-def map_feature(spm, im):
+def map_features(spm, im):
     spm = C(sparsify(spm))
     im = C(sparsify(im))
     assert spm['shape'][1] == im['shape'][1],\
@@ -39,7 +39,7 @@ def map_feature(spm, im):
     return Py(lib.remap_rows(spm, im))
 
 
-def map_feature_smin(spm, im, smin):
+def map_features_smin(spm, im, smin):
     spm = C(sparsify(spm))
     im = C(sparsify(im))
     assert spm['shape'][1] == im['shape'][1],\

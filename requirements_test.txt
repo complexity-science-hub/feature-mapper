@@ -1,5 +1,6 @@
 pytest
 cffi
 numpy==1.17.3
+numpy-indexed
 scipy
 pandas
