@@ -12,10 +12,6 @@
 \usetikzlibrary{arrows,arrows.meta,positioning,shapes,mindmap,trees,backgrounds,
   fit,calc,intersections}
 
-\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3.2cm, minimum height=1cm, text centered, draw=black, fill=DivColorblindSafe0, text width=2.8cm]
-
-\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=DivColorblindSafe2!50, text width=2.8cm]
-
 \tikzstyle{inoutpar} = [rectangle, text centered, fill=white, draw=black, minimum width=2cm, minimum height=2em]
 
 % activity
@@ -23,12 +19,11 @@
 
 \tikzstyle{start} = [circle, fill=black, scale=1.5]
 
-
 \tikzstyle{comment} = [rectangle, dotted, minimum width=4cm, minimum height=1cm, text centered, draw=black, fill=gray!30, text width=3.8cm, scale=0.8]
 
 \tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
 
-% \def\myarrow{{Latex[scale=1.5]}}
+
 \def\myarrow{{Straight Barb[scale=2]}}
 \tikzstyle{arrow} = [-\myarrow]
 \pgfarrowsdeclaredouble{<}{>}{Straight Barb[scale=2]}{}
@@ -129,7 +124,7 @@
     }{
       ($(current bounding box.south east)+(5mm, 5mm)$)
     }{
-      \textbf{act} map\_feature
+      \textbf{act} map\_features
     },
     % show background grid, show background rectangle,
     act/.append style/={text width=32mm},
@@ -193,9 +188,9 @@
 
 \begin{tikzpicture}[
     node distance = 8mm,
-    mybackground2={($(current bounding box.north west)+(10mm, -5mm)$)}%
-    {($(current bounding box.south east)+(0, 5mm)$)}%
-    {\textbf{act} map\_feature\_smin},
+    mybackground2={($(current bounding box.north west)+(12mm, -5mm)$)}%
+    {($(current bounding box.south east)+(-5mm, 5mm)$)}%
+    {\textbf{act} map\_features\_smin},
     % show background grid, show background rectangle,
     act/.append style/={text width=32mm},
     inoutpar/.append style/={text width=32mm},
@@ -204,22 +199,29 @@
   % ANCHOR : INPUT: X0
   \node [inoutpar] (in-obs) {Observations with in-features};
 
-  % diags split
-  \node [decision, below=of in-obs] (diags split) {};
-  \draw [->] (in-obs) -- (diags split);
+  % in-obs split
+  \node [decision, below=of in-obs] (in-obs split) {};
+  \draw [->] (in-obs) -- (in-obs split);
+
+  % mm-split 2
+  \node [decision, below=of in-obs, xshift=-6mm] (mm split 2) {};
 
   % (map) assign out-featurs to obs
-  \node [act, below=8mm of diags split] (map) {
+  \node [act, below=8mm of in-obs split, xshift=-3mm] (map) {
     map\_feature
   };
-  \draw [->b] (diags split) -- (map.north)
-  node [above right, pinlbl, text width=2cm] {
-    observations with in-features
+  \draw [->b] (in-obs split) -- ($(map.north)+(3mm,0)$)
+  node [above right, pinlbl, text width=25mm] {
+    obs. w/in-features
+  };
+  \draw [->b] (mm split 2) -- ($(map.north)-(3mm,0)$)
+  node [above left, pinlbl, text width=2cm, align=right] {
+    sorted mapping matrix
   };
 
   % decide if done
   \node [decision, below=15mm of map] (decide) {};
-  \draw [b->] (map) -- (decide);
+  \draw [b->] (map.south) node [lbl, below left]{obs. w/out-features} -- (decide);
 
   \node [act, left=of map, text width=50mm] (update) {
     remove first weakly supported out-feature from mapping matrix
@@ -227,12 +229,12 @@
   \draw [->b] (decide) node [lbl, above left, text width=40mm, align=right] {
     [$\exists$ weakly supported out-feature (i.e., with support < s\textsubscript{min})]
   } -| (update);
-  \node [decision] (mm split) at (update |- diags split) {};
+  \node [decision] (mm split) at (update |- in-obs split) {};
   \draw [b->] (update) -- (mm split);
-  \draw [->] (mm split) -- (diags split);
+  \draw [->] (mm split) -- (mm split 2);
 
   \node [inoutpar, below=of decide] (out-obs) {Observations with out-features};
-  \draw [->] (decide) node [lbl, below right, text width=35mm] {
+  \draw [->] (decide) node [lbl, below right, text width=15mm] {
     [otherwise]
   } -- (out-obs);
 
