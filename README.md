@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mstrauss/feature-mapper.svg)](https://travis-ci.org/mstrauss/feature-mapper)
+[![Build Status](https://travis-ci.org/complexity-science-hub/feature-mapper.svg?branch=master)](https://travis-ci.org/complexity-science-hub/feature-mapper)
 
 # Synopsis
 
@@ -32,11 +32,11 @@ Two procedures and a helper class are made available:
 The translation/mapping is performed, as follows (both variants).
 Here the activity diagrams:
 
-![activity diagramm of map-feature](docs/feature-mapping-activity-0.png)
+![activity diagramm of map-features](docs/feature-mapping-activity-0.png)
 
-![activity diagramm of map-feature-smin](docs/feature-mapping-activity-1.png)
+![activity diagramm of map-feature-smins](docs/feature-mapping-activity-1.png)
 
-The variant `map_feature_smin` ensures, that all output features have
+The variant `map_features_smin` ensures, that all output features have
 at least `smin` observations.
 
 `FeatureMapper` helps by providing a wrapper that can match column
