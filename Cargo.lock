@@ -95,7 +95,7 @@ dependencies = [
 
 [[package]]
 name = "feature-mapper"
-version = "0.1.9"
+version = "0.1.10"
 dependencies = [
  "env_logger 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",

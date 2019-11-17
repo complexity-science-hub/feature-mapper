@@ -5,9 +5,9 @@ python:
 before_install:
   - python --version
   - pip install -U pip setuptools
-  - pip install -r requirements_test.txt
+  - pip install -U -r requirements_test.txt
   - wget -O - https://sh.rustup.rs | sh -s -- -y -q
 install:
   - source $HOME/.cargo/env
   - pip install .
-script: pytest --import-mode=append
+script: pytest --import-mode=append -v
