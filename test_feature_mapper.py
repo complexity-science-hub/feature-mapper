@@ -221,6 +221,19 @@ if os.path.isfile('examples/infeatures.csv'):
         assert_eq_spm(mf00, mf0)
         map_features_smin(obs, mm, 10)
 
+    if os.path.isfile('examples/mapping_matrix.npz'):
+
+        def test_FeatureMapper_example(example1):
+            obs, _ = example1
+            mm = sparse.load_npz('examples/mapping_matrix.npz')
+            mm_col = list(
+                map(str.strip,
+                    open('examples/mapping_matrix.col').readlines()))
+            obs_col = np.random.choice(mm_col, obs.shape[1])
+            mf = FeatureMapper().fit(mm, mm_col)
+            # here we have underdetermined input features:
+            mf.transform(obs, obs_col)
+
 
 def test_FeatureMapper(indicator_matrix):
     obs_under = np.array([[1, 1, 1, 1], \

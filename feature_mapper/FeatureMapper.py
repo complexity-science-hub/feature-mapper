@@ -1,6 +1,7 @@
 import numpy as np
 import numpy_indexed as npi
 import pandas as pd
+from scipy import sparse
 
 from .wrapper import map_features, map_features_smin
 
@@ -10,7 +11,10 @@ class FeatureMapper:
         pass
 
     def fit(self, mapping_matrix, column_names):
-        self.mm = mapping_matrix
+        if sparse.issparse(mapping_matrix):
+            self.mm = mapping_matrix.toarray()
+        else:
+            self.mm = np.array(mapping_matrix)
         self.mm_colnames = np.array(column_names)
         return self
 
