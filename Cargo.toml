@@ -3,7 +3,7 @@
 [package]
 edition = '2018'
 name = "feature-mapper"
-version = "0.1.10"
+version = "0.1.11"
 authors = ["Markus Strauss <mstrauss@users.noreply.github.com>"]
 description = 'Transforms a binary feature matrix by applying a binary mapping matrix.'
 license = 'GPL-3.0+'
